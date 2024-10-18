@@ -68,6 +68,12 @@ async def handle_module_choose(update: Update, context) -> None:
             chat_id=query.message.chat_id,
             text=text
         )
+    elif query.data == "unit_2":
+        text = ("А это у нас UNIT 2 \n " )
+        await context.bot.send_message(
+            chat_id=query.message.chat_id,
+            text=text
+        )
     else:
         await context.bot.send_message(
             chat_id=query.message.chat_id,
