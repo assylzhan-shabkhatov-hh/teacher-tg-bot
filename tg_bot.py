@@ -56,21 +56,17 @@ async def handle_module_choose(update: Update, context) -> None:
         await query.edit_message_text(
             text="Ты выбрал " + module_select[Modules.Module_1.value],
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton(text=key, callback_data=value)] for key, value in module_1_select.items()
+                [InlineKeyboardButton(text=value, callback_data=key)] for key, value in module_1_select.items()
             ])
         )
-    elif query.data == Modules.Module_2.value:
-        module_1_select = {
-            "unit_1": "unit 1",
-            "unit_2": "unit 2",
-            "unit_3": "unit 3",
-            "unit_4": "unit 4",
-        }
-        await query.edit_message_text(
-            text="Ты выбрал " + module_select[Modules.Module_2.value],
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton(text=key, callback_data=value)] for key, value in module_1_select.items()
-            ])
+    elif query.data == "unit_1":
+        text = ("Personal and Professional Qualities of a Professional \n " + 
+            "1. Read the following words paying attention to the pronunciation.\n " + 
+            "Professionalism [pra'fel(a)n(a)iz(a)m], satisfaction [sætis' fakf(a)n], expectation [ekspek'ter/(a)n], attribute [ætribjut), competence [kompit(a)ns), conscientiousness [kon/tenfesnas], integrity [in'tegriti], appropriateness [a'praupriatnas], awkwardness ['o:kwadnas]."
+        )
+        await context.bot.send_message(
+            chat_id=query.message.chat_id,
+            text=text
         )
     else:
         await context.bot.send_message(
