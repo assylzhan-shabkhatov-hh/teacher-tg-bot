@@ -1,10 +1,31 @@
+from enum import Enum
+import logging
 import os
 
 from dotenv import load_dotenv
-from telegram import Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (ApplicationBuilder, CommandHandler, ContextTypes,
-                          MessageHandler, filters)
+                          MessageHandler, filters, CallbackQueryHandler)
 
+# Enable logging
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+)
+logger = logging.getLogger(__name__)
+
+class Modules(Enum):
+    Module_1 = "Module 1"
+    Module_2 = "Module 2"
+    Module_3 = "Module 3"
+    Module_4 = "Module 4"
+    Module_5 = "Module 5"
+
+module_select = {
+    Modules.Module_1.value: "To be professional today",
+    Modules.Module_2.value: "Business organizations",
+    Modules.Module_3.value: "Business meetings",
+    Modules.Module_4.value: "Bussines corresponders",
+}
 # Load environment variables from .env file
 load_dotenv()
 
@@ -16,69 +37,72 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def help_command(update: Update, context) -> None:
     await update.message.reply_text(
-        "Чем могу помочь ?\n"
-        "/1. To be professional today\n"
-        "/2. Business organizations\n"
-        "/3. Business meetings\n"
-        "/4. Bussines corresponders\n"
+        "Чем могу помочь ?\n",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton(text=value, callback_data=key)] for key, value in module_select.items()
+        ])
     )
 
-# Функция для команды /grammar
-async def grammar(update: Update, context) -> None:
-    await update.message.reply_text(
-        "Вот некоторые важные грамматические правила:\n"
-        "1. Present Simple используется для действий, происходящих регулярно.\n"
-        "2. Present Continuous используется для действий, происходящих прямо сейчас."
-    )
-
-# Функция для команды /vocabulary
-async def vocabulary(update: Update, context) -> None:
-    await update.message.reply_text(
-        "Сегодняшние новые слова:\n"
-        "1. Apple - Яблоко\n"
-        "2. Book - Книга\n"
-        "3. Cat - Кот"
-    )
-
-# Функция для команды /quiz
-async def quiz(update: Update, context) -> None:
-    await update.message.reply_text(
-        "Начнем небольшой тест:\n"
-        "Какое время используется для описания действий, происходящих прямо сейчас?\n"
-        "1. Present Simple\n"
-        "2. Present Continuous\n"
-        "Напишите ваш ответ (1 или 2)."
-    )
-
-# Функция для обработки ответов на тесты
-async def handle_quiz_answer(update: Update, context) -> None:
-    user_answer = update.message.text
-    if user_answer == "2":
-        await update.message.reply_text("Правильно! Present Continuous используется для действий, происходящих сейчас.")
+async def handle_module_choose(update: Update, context) -> None:
+    query = update.callback_query
+    await query.answer()
+    if query.data == Modules.Module_1.value:
+        module_1_select = {
+            "unit_1": "unit 1",
+            "unit_2": "unit 2",
+            "unit_3": "unit 3",
+            "unit_4": "unit 4",
+        }
+        await query.edit_message_text(
+            text="Ты выбрал " + module_select[Modules.Module_1.value],
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton(text=key, callback_data=value)] for key, value in module_1_select.items()
+            ])
+        )
+    elif query.data == Modules.Module_2.value:
+        module_1_select = {
+            "unit_1": "unit 1",
+            "unit_2": "unit 2",
+            "unit_3": "unit 3",
+            "unit_4": "unit 4",
+        }
+        await query.edit_message_text(
+            text="Ты выбрал " + module_select[Modules.Module_2.value],
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton(text=key, callback_data=value)] for key, value in module_1_select.items()
+            ])
+        )
     else:
-        await update.message.reply_text("Неправильно. Правильный ответ: Present Continuous.")
-
+        await context.bot.send_message(
+            chat_id=query.message.chat_id,
+            text=f"Что это : {query.data}"
+        )
 # Функция для обработки обычных сообщений
 async def echo(update: Update, context) -> None:
     await update.message.reply_text(f"Вы написали: {update.message.text}. Я помогу вам с английским!")
 
 
+# Error handler function
+async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Log the error and send a message to notify the user."""
+    logger.error(msg="Exception while handling an update:", exc_info=context.error)
+
+    # Notify the user that something went wrong
+    if isinstance(update, Update):
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="Произошла ошибка. Пожалуйста, попробуйте снова позже.")
+
 def main():
     application = ApplicationBuilder().token(bot_token).build()
     
-    # start_handler = CommandHandler('start', start)
-    # message_handler = MessageHandler(filters.TEXT, handle_message)
-
-    # application.add_handler(start_handler)
-    # application.add_handler(message_handler)
     application.add_handler(CommandHandler("start", help_command))
-    application.add_handler(CommandHandler("1", grammar))
-    application.add_handler(CommandHandler("2", vocabulary))
-    application.add_handler(CommandHandler("3", quiz))
+    application.add_handler(CallbackQueryHandler(handle_module_choose))
 
     # Обработчик ответов на тесты
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_quiz_answer))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
     
+    # Register the error handler
+    application.add_error_handler(error_handler)
+
     application.run_polling()
 
 
