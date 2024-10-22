@@ -1,0 +1,32 @@
+{
+  "module_1": {
+    "description": "To be professional today",
+    "units": {
+      "1": {
+        "title": "Personal and Professional Qualities of a Professional ",
+        "chapters": {
+          "1": "Read the following words paying attention to the pronunciation. \\n",
+          "2": "Professionalism [pra'fel(a)n(a)iz(a)m], satisfaction [sætis' fakf(a)n], expectation [ekspek'ter/(a)n], attribute [ætribjut), competence [kompit(a)ns), conscientiousness [kon/tenfesnas], integrity [in'tegriti], appropriateness [a'praupriatnas], awkwardness ['o:kwadnas]."
+        }
+      }
+    }
+  },
+  "module_2": {
+    "description": "Business organizations",
+    "units": {
+      "1": {
+        "title": "Personal and Professional Qualities of a Professional ",
+        "chapters": {
+          "1": "Read the following words paying attention to the pronunciation. \\n",
+          "2": "Professionalism [pra'fel(a)n(a)iz(a)m], satisfaction [sætis' fakf(a)n], expectation [ekspek'ter/(a)n], attribute [ætribjut), competence [kompit(a)ns), conscientiousness [kon/tenfesnas], integrity [in'tegriti], appropriateness [a'praupriatnas], awkwardness ['o:kwadnas]."
+        }
+      }
+    }
+  },
+  "module_3": {
+    "description": "Business meetings"
+  },
+  "module_4": {
+    "description": "Bussines corresponders"
+  }
+}
