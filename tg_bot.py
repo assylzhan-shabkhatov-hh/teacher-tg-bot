@@ -1,7 +1,8 @@
+import json
 import os
 
 from dotenv import load_dotenv
-from telegram import Update
+from telegram import KeyboardButton, ReplyKeyboardMarkup, Update
 from telegram.ext import (ApplicationBuilder, CommandHandler, ContextTypes,
                           MessageHandler, filters)
 
@@ -11,74 +12,57 @@ load_dotenv()
 # Access the bot token from the environment variable
 bot_token = os.getenv('BOT_TOKEN')
 
+
+def load_quiz_data():
+    with open("quiz_data.json", "r") as file:
+        return json.load(file)
+
+quiz_data = load_quiz_data()
+
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=update.effective_chat.id, text=update.message.text)
 
-async def help_command(update: Update, context) -> None:
-    await update.message.reply_text(
-        "Чем могу помочь ?\n"
-        "/1. To be professional today\n"
-        "/2. Business organizations\n"
-        "/3. Business meetings\n"
-        "/4. Bussines corresponders\n"
-    )
+user_progress = {}
 
-# Функция для команды /grammar
-async def grammar(update: Update, context) -> None:
-    await update.message.reply_text(
-        "Вот некоторые важные грамматические правила:\n"
-        "1. Present Simple используется для действий, происходящих регулярно.\n"
-        "2. Present Continuous используется для действий, происходящих прямо сейчас."
-    )
 
-# Функция для команды /vocabulary
-async def vocabulary(update: Update, context) -> None:
-    await update.message.reply_text(
-        "Сегодняшние новые слова:\n"
-        "1. Apple - Яблоко\n"
-        "2. Book - Книга\n"
-        "3. Cat - Кот"
-    )
+async def start_quiz(update: Update, context):
+    user_progress[update.message.from_user.id] = 0
+    await send_question(update, update.message.from_user.id, update.message.chat.id)
 
-# Функция для команды /quiz
-async def quiz(update: Update, context) -> None:
-    await update.message.reply_text(
-        "Начнем небольшой тест:\n"
-        "Какое время используется для описания действий, происходящих прямо сейчас?\n"
-        "1. Present Simple\n"
-        "2. Present Continuous\n"
-        "Напишите ваш ответ (1 или 2)."
-    )
-
-# Функция для обработки ответов на тесты
-async def handle_quiz_answer(update: Update, context) -> None:
-    user_answer = update.message.text
-    if user_answer == "2":
-        await update.message.reply_text("Правильно! Present Continuous используется для действий, происходящих сейчас.")
+async def send_question(update: Update, user_id, chat_id):
+    index = user_progress.get(user_id, 0)
+    if index < len(quiz_data["questions"]):
+        question_data = quiz_data["questions"][index]
+        buttons = [[KeyboardButton(text=option)] for option in question_data["options"]]
+        keyboard = ReplyKeyboardMarkup(buttons, resize_keyboard=True)
+        await update.message.reply_text(question_data["question"], reply_markup=keyboard)
     else:
-        await update.message.reply_text("Неправильно. Правильный ответ: Present Continuous.")
+        await update.message.reply_text("Quiz finished! 🎉")
 
-# Функция для обработки обычных сообщений
-async def echo(update: Update, context) -> None:
-    await update.message.reply_text(f"Вы написали: {update.message.text}. Я помогу вам с английским!")
 
+async def check_answer(update: Update, context):
+    user_id = update.message.from_user.id
+    index = user_progress.get(user_id, 0)
+    if index < len(quiz_data["questions"]):
+        question_data = quiz_data["questions"][index]
+        if update.message.text == question_data["options"][question_data["correct"]]:
+            await update.message.reply_text("Correct! 🎉")
+        else:
+            await update.message.reply_text("Wrong answer. Try again! ❌")
+            return
+        if(user_id not in user_progress):
+            user_progress[user_id] = 0
+        user_progress[user_id] += 1
+        await send_question(update, user_id, update.message.chat.id)
+    else:
+        await update.message.reply_text("Quiz already completed! ✅")
 
 def main():
     application = ApplicationBuilder().token(bot_token).build()
     
-    # start_handler = CommandHandler('start', start)
-    # message_handler = MessageHandler(filters.TEXT, handle_message)
+    application.add_handler(CommandHandler("quiz", start_quiz))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, check_answer))  # Add this line
 
-    # application.add_handler(start_handler)
-    # application.add_handler(message_handler)
-    application.add_handler(CommandHandler("start", help_command))
-    application.add_handler(CommandHandler("1", grammar))
-    application.add_handler(CommandHandler("2", vocabulary))
-    application.add_handler(CommandHandler("3", quiz))
-
-    # Обработчик ответов на тесты
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_quiz_answer))
-    
     application.run_polling()
 
 
