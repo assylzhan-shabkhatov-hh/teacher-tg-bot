@@ -23,10 +23,19 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=update.effective_chat.id, text=update.message.text)
 
 user_progress = {}
+user_scores = {}
+user_data = {}
 
 
 async def start_quiz(update: Update, context):
-    user_progress[update.message.from_user.id] = 0
+    user_id = update.message.from_user.id
+    user_progress[user_id] = 0
+    user_data[user_id] = {
+        "username": update.message.from_user.username,
+        "first_name": update.message.from_user.first_name,
+        "last_name": update.message.from_user.last_name,
+        "chat_id": update.message.chat.id
+    }
     await send_question(update, update.message.from_user.id, update.message.chat.id)
 
 async def send_question(update: Update, user_id, chat_id):
@@ -37,11 +46,17 @@ async def send_question(update: Update, user_id, chat_id):
         keyboard = ReplyKeyboardMarkup(buttons, resize_keyboard=True)
         await update.message.reply_text(question_data["question"], reply_markup=keyboard)
     else:
+        print("Quiz already completed!", user_data[user_id])
         await update.message.reply_text("Quiz finished! 🎉")
 
 
 async def check_answer(update: Update, context):
     user_id = update.message.from_user.id
+
+    if(not user_id in user_data):
+        await update.message.reply_text("Please start the quiz first using /quiz command.")
+        return
+    
     index = user_progress.get(user_id, 0)
     if index < len(quiz_data["questions"]):
         question_data = quiz_data["questions"][index]

@@ -1,19 +1,19 @@
 {
     "questions": [
         {
-            "question": "What is the capital of France?",
-            "options": ["Berlin", "Madrid", "Paris", "Rome"],
-            "correct": 2
+            "question": "A data type that describes integers",
+            "options": ["integer(int)", "float", "float(str)", "complex", "None(null)"],
+            "correct": 0
         },
         {
-            "question": "Which planet is known as the Red Planet?",
-            "options": ["Earth", "Mars", "Jupiter", "Venus"],
-            "correct": 1
+            "question": "A data type that describes real numbers",
+            "options": ["float", "integer(int)", "string (str)", "complex", "None(null)"],
+            "correct": 0
         },
         {
-            "question": "Who wrote 'Hamlet'?",
-            "options": ["Charles Dickens", "William Shakespeare", "Mark Twain", "Leo Tolstoy"],
-            "correct": 1
+            "question": "A data type that describes string data",
+            "options": ["string (str)", "float", "integer (int)", "complex", "None(null)"],
+            "correct": 0
         }
     ]
 }
