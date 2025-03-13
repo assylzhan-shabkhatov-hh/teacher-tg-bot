@@ -14,6 +14,37 @@
             "question": "A data type that describes string data",
             "options": ["string (str)", "float", "integer (int)", "complex", "None(null)"],
             "correct": 0
+        },
+        {
+            "question": "float (5.45678+6.45678) - output of the correct answer",
+            "options": ["11.91356", "11", "11.913", "0", "11.91"],
+            "correct": 0
+        },
+        {
+            "question": "Input operator in Python, C++",
+            "options": ["input (), cin (), scanf ()", "output (), cout ()", "print (), printf ()", "write (), private ()", "read (), public ()"],
+            "correct": 0
+        },
+        {
+            "question": "Output operator in Python, C++ ",
+            "options": ["print (), printf (), cout ()", "output (), write ()", "input (), cin (), scanf ()", "write (), private ()", "read (), public ()"],
+            "correct": 0
+        },
+        {
+            "question": "x=5; y=60; x+=x; y+= y; print (x, y), Output result",
+            "options": ["10,120", "5, 60", "6,61", "11,121", "65,60"],
+            "correct": 0
+        },
+        {
+            "question": "Function of raising the number x to the power of y",
+            "options": ["pow (x, y)", "double pow (double x, double y)", "pow (double double y)", "doublex(double y)"],
+            "correct": 0
+        },
+        {
+            "question": "In both Python and C++, the function pow(x, y) is used to raise the number x to the power of y.Function of raising the number x to the power of y:",
+            "options": [" pow (x, y)", "double pow (double x, double y)", "pow (double double y)", "doublex(double y)"],
+            "correct": 0
         }
+
     ]
 }
