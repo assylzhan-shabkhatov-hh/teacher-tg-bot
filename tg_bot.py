@@ -2,7 +2,7 @@ import json
 import os
 
 from dotenv import load_dotenv
-from telegram import KeyboardButton, ReplyKeyboardMarkup, Update
+from telegram import KeyboardButton, ReplyKeyboardMarkup, Update, ReplyKeyboardRemove
 from telegram.ext import (ApplicationBuilder, CommandHandler, ContextTypes,
                           MessageHandler, filters)
 
@@ -47,7 +47,7 @@ async def send_question(update: Update, user_id, chat_id):
         await update.message.reply_text(question_data["question"], reply_markup=keyboard)
     else:
         print("Quiz already completed!", user_data[user_id])
-        await update.message.reply_text("Quiz finished! 🎉")
+        await update.message.reply_text("Quiz finished! 🎉", reply_markup=ReplyKeyboardRemove())
 
 
 async def check_answer(update: Update, context):
